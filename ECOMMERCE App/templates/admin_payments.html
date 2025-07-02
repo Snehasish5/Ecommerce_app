@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Payments - Admin{% endblock %}
+
+{% block content %}
+<h2 class="my-4">Payment Requests</h2>
+<table class="table table-bordered table-hover align-middle">
+  <thead class="table-dark">
+    <tr>
+      <th>ID</th>
+      <th>User</th>
+      <th>Amount</th>
+      <th>Status</th>
+      <th>Order ID</th>
+      <th>Payment ID</th>
+      <th>Time</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for p in payments %}
+    <tr id="payment-{{ p.id }}">
+      <td>{{ p.id }}</td>
+      <td>{{ p.username }}</td>
+      <td>₹{{ '%.2f' | format(p.amount / 100) }}</td>
+      <td id="status-{{ p.id }}">
+        {% if p.status == 'approved' %}
+          <span class="badge bg-primary">Approved</span>
+        {% elif p.status == 'paid' %}
+          <span class="badge bg-success">Paid</span>
+        {% elif p.status == 'rejected' %}
+          <span class="badge bg-danger">Rejected</span>
+        {% else %}
+          <span class="badge bg-secondary">Pending</span>
+        {% endif %}
+      </td>
+      <td>{{ p.order_id or '-' }}</td>
+      <td>{{ p.payment_id or '-' }}</td>
+      <td>{{ p.created_at }}</td>
+      <td>
+        {% if p.status == 'pending' %}
+        <form action="{{ url_for('approve_payment', payment_id=p.id) }}" method="POST" style="display:inline;">
+          <button class="btn btn-success btn-sm" onclick="return confirm('Approve payment ID #{{ p.id }}?')">Approve</button>
+        </form>
+        <form action="{{ url_for('reject_payment', payment_id=p.id) }}" method="POST" style="display:inline;">
+          <button class="btn btn-danger btn-sm" onclick="return confirm('Reject payment ID #{{ p.id }}?')">Reject</button>
+        </form>
+        {% elif p.status == 'approved' %}
+          <span class="text-muted small">Waiting for payment</span>
+        {% elif p.status == 'paid' %}
+          <span class="text-muted small">Completed</span>
+        {% else %}
+          <span class="text-muted small">No actions available</span>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
