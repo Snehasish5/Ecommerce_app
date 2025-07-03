@@ -28,9 +28,7 @@
               {{ discount_percentage }}% OFF
             </span>
           </div>
-          <form action="{{ url_for('add_to_wishlist', product_id=product.id) }}" method="post" class="d-inline">
-            <button type="submit" class="btn btn-outline-danger btn-sm">❤️ Wishlist</button>
-          </form>
+
           <a href="{{ url_for('product', product_id=product.id) }}" class="btn btn-primary mt-auto">View Details</a>
         </div>
       </div>
