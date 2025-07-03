@@ -432,6 +432,56 @@ def admin_products():
     products = get_products()
     return render_template('admin_products.html', products=products)
 
+@app.route('/wishlist/add/<int:product_id>', methods=['POST'])
+@login_required
+def add_to_wishlist(product_id):
+    user_id = session['user_id']
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("""
+            INSERT IGNORE INTO wishlist (user_id, product_id)
+            VALUES (%s, %s)
+        """, (user_id, product_id))
+        conn.commit()
+        flash("❤️ Added to wishlist!", "success")
+    except Exception as e:
+        flash("Error adding to wishlist.", "danger")
+    finally:
+        cursor.close()
+        conn.close()
+    return redirect(request.referrer or url_for('index'))
+
+@app.route('/wishlist/remove/<int:product_id>', methods=['POST'])
+@login_required
+def remove_from_wishlist(product_id):
+    user_id = session['user_id']
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM wishlist WHERE user_id = %s AND product_id = %s", (user_id, product_id))
+    conn.commit()
+    cursor.close()
+    conn.close()
+    flash("Removed from wishlist.", "info")
+    return redirect(request.referrer or url_for('wishlist'))
+
+@app.route('/wishlist')
+@login_required
+def wishlist():
+    user_id = session['user_id']
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("""
+        SELECT p.id, p.name, p.price, p.image_url
+        FROM wishlist w
+        JOIN products p ON w.product_id = p.id
+        WHERE w.user_id = %s
+    """, (user_id,))
+    items = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return render_template('wishlist.html', wishlist_items=items)
+
 @app.context_processor
 def inject_year():
     return {'current_year': datetime.now().year}
