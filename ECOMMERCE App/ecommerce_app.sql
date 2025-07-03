@@ -140,9 +140,22 @@ FOREIGN KEY (product_id) REFERENCES products(id);
 
 ALTER TABLE order_items ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP;
 
+CREATE TABLE wishlist (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    product_id INT NOT NULL,
+    added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (product_id) REFERENCES products(id),
+    UNIQUE KEY unique_wishlist (user_id, product_id)
+);
+
+describe wishlist;
+
 use ecommerce;
 select * from users;
 select * from products;
 select * from orders;
 select * from order_items;
 select * from payments;
+select * from wishlist;
