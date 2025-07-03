@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Shopping Cart - ShopEase{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+  <h2>Your Cart</h2>
+
+  {% if products %}
+  <table class="table table-striped align-middle">
+    <thead>
+      <tr>
+        <th>Product</th>
+        <th>Quantity</th>
+        <th>Price</th>
+        <th>Subtotal</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for product in products %}
+      <tr>
+        <td>{{ product.name }}</td>
+
+        <!-- Quantity +/- buttons -->
+        <td>
+          <form method="POST" action="{{ url_for('update_cart') }}" class="d-flex align-items-center gap-2">
+            <input type="hidden" name="product_id" value="{{ product.id }}">
+            <button type="submit" name="action" value="decrement" class="btn btn-outline-secondary btn-sm">−</button>
+            <span class="px-2">{{ cart[product.id|string] }}</span>
+            <button type="submit" name="action" value="increment" class="btn btn-outline-secondary btn-sm">+</button>
+          </form>
+        </td>
+
+        <td>₹{{ product.price }}</td>
+        <td>₹{{ product.price * cart[product.id|string] }}</td>
+        <td>
+          <form method="POST" action="{{ url_for('remove_from_cart') }}" style="display:inline;">
+            <input type="hidden" name="product_id" value="{{ product.id }}">
+            <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <h4>Total: ₹{{ total }}</h4>
+
+  <!-- Uniform Styled Action Buttons -->
+  <div class="d-flex flex-wrap gap-3 mt-4">
+    <form method="GET" action="{{ url_for('checkout') }}">
+      <button type="submit" class="btn btn-outline-danger px-4 py-2">Proceed to Checkout</button>
+    </form>
+
+    <form method="POST" action="{{ url_for('clear_cart') }}">
+      <button type="submit" class="btn btn-outline-danger px-4 py-2">Remove All</button>
+    </form>
+
+    <form method="GET" action="{{ url_for('index') }}">
+      <button type="submit" class="btn btn-outline-danger px-4 py-2">← Back to Home Page</button>
+    </form>
+  </div>
+
+  {% else %}
+    <p>Your cart is empty.</p>
+    <form method="GET" action="{{ url_for('index') }}">
+      <button type="submit" class="btn btn-outline-danger mt-3 px-4 py-2">← Back to Home Page</button>
+    </form>
+  {% endif %}
+</div>
+{% endblock %}

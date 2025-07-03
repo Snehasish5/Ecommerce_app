@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}{{ product.name }} - ShopEase{% endblock %}
+{% block content %}
+{% set discount_percentage = 20 %}
+{% set discount_multiplier = (100 - discount_percentage) %}
+{% set original_price = (product.price * 100 / discount_multiplier) | round(0) %}
+
+<div class="row mt-4">
+  <div class="col-md-6">
+    <img src="{{ url_for('static', filename='images/' ~ product.image_url) }}" alt="{{ product.name }}" class="img-fluid rounded shadow-sm">
+  </div>
+
+  <div class="col-md-6">
+    <h2>{{ product.name }}</h2>
+
+    <div class="mb-2">
+      <span class="text-success fw-bold fs-4">₹{{ product.price }}</span>
+      <span class="text-danger text-decoration-line-through ms-2 fs-5">₹{{ original_price }}</span>
+    </div>
+
+    <div class="mb-3">
+      <span class="badge rounded-pill bg-danger fs-6 px-3 py-2">
+        {{ discount_percentage }}% OFF
+      </span>
+    </div>
+
+    <p>{{ product.description }}</p>
+
+    <p><strong>Stock:</strong> 
+    {% if product.stock > 4 %}
+    <span class="text-success">Available</span>
+      {% elif product.stock == 1 %}
+    <span class="text-danger fw-bold">Last one remaining</span>
+      {% elif product.stock > 0 %}
+    <span class="text-warning fw-bold">Few remaining</span>
+      {% else %}
+    <span class="text-danger">Out of Stock</span>
+    {% endif %}
+    </p>
+
+    {% if product.stock > 0 %}
+      <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="get" class="d-flex align-items-center gap-2">
+        <label for="qty" class="form-label mb-0">Quantity:</label>
+        <input type="number" id="qty" name="qty" class="form-control w-25" value="1" min="1" max="{{ product.stock }}" required />
+        <button type="submit" class="btn btn-success btn-lg">Add to Cart</button>
+      </form>
+    {% else %}
+      <button class="btn btn-secondary btn-lg mt-2" disabled>Out of Stock</button>
+    {% endif %}
+    <form action="{{ url_for('add_to_wishlist', product_id=product.id) }}" method="post" class="d-inline">
+      <button type="submit" class="btn btn-outline-danger btn-sm">❤️Wishlist</button>
+    </form>
+    <a href="{{ url_for('index') }}" class="btn btn-primary mt-4">← Back to Home</a>
+  </div>
+</div>
+{% endblock %}

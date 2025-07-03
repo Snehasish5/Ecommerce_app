@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Admin - Manage Products{% endblock %}
+{% block content %}
+<h2>Admin Dashboard - Products</h2>
+<a href="#" class="btn btn-success mb-3">Add New Product</a> <!-- Add functionality later -->
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Category</th>
+      <th>Price</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for product in products %}
+    <tr>
+      <td>{{ product.id }}</td>
+      <td>{{ product.name }}</td>
+      <td>{{ product.category }}</td>
+      <td>₹{{ product.price }}</td>
+      <td>
+        <a href="#" class="btn btn-sm btn-warning">Edit</a>
+        <a href="#" class="btn btn-sm btn-danger">Delete</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

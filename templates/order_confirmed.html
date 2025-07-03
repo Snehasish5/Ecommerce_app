@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Order Confirmation{% endblock %}
+
+{% block content %}
+  <div class="container my-5">
+    <h2>🎉 Thank you for your order!</h2>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} mt-3">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+    <a href="{{ url_for('index') }}" class="btn btn-primary mt-3">Back to Home</a>
+  </div>
+{% endblock %}

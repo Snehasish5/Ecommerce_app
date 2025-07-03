@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}My Orders{% endblock %}
+{% block content %}
+<div class="container my-5">
+  <h2>My Order History</h2>
+  {% if orders %}
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Product Name</th>
+        <th>Amount</th>
+        <th>Status</th>
+        <th>Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for order in orders %}
+      <tr>
+        <td>{{ order.id }}</td>
+        <td>{{ order.product_name or "N/A" }}</td>
+        <td>₹{{ '%.2f' | format(order.total_amount) }}</td>
+        <td>
+          <span class="badge 
+            {% if order.status == 'paid' %}
+              bg-success
+            {% elif order.status == 'failed' %}
+              bg-danger
+            {% else %}
+              bg-warning
+            {% endif %}
+          ">
+          {{ order.status.capitalize()}}
+          </span>
+        </td>
+        <td>{{ order.created_at }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+    <p>You haven't placed any orders yet.</p>
+  {% endif %}
+  <a href="{{ url_for('index') }}" class="btn btn-primary mt-3">
+  ← Back to Home
+  </a>
+</div>
+{% endblock %}
