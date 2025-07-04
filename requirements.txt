@@ -156,5 +156,5 @@ WTForms==3.2.1
 xyzservices==2024.9.0
 zope.event==5.0
 zope.interface==7.2
-flask 2.3.3
+flask == 2.3.3
 Werkzeug==2.3.7
