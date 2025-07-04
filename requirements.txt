@@ -130,9 +130,6 @@ starlette==0.46.1
 sympy==1.13.1
 tensorboard==2.18.0
 tensorboard-data-server==0.7.2
-tensorflow==2.18.0
-tensorflow-hub==0.16.1
-tensorflow_intel==2.18.0
 termcolor==2.5.0
 tf_keras==2.18.0
 threadpoolctl==3.5.0
@@ -154,5 +151,3 @@ WTForms==3.2.1
 xyzservices==2024.9.0
 zope.event==5.0
 zope.interface==7.2
-flask == 2.3.3
-Werkzeug==2.3.7
