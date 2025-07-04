@@ -90,3 +90,4 @@ wheel==0.45.0
 wrapt==1.16.0
 wsproto==1.2.0
 WTForms==3.2.1
+gunicorn==23.0.0
