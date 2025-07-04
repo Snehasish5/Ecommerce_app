@@ -131,8 +131,6 @@ sympy==1.13.1
 tensorboard==2.18.0
 tensorboard-data-server==0.7.2
 termcolor==2.5.0
-tf_keras==2.18.0
-threadpoolctl==3.5.0
 torch==2.5.1+cu118
 torchaudio==2.5.1+cu118
 torchvision==0.20.1
