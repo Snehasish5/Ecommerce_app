@@ -486,7 +486,7 @@ def inject_year():
     return {'current_year': datetime.now().year}
 
 # Required for Vercel serverless deployment
-handler = app
+app = app
 
 if __name__ == '__main__':
     app.run(debug=True)
