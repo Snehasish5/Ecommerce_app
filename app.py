@@ -36,10 +36,9 @@ def admin_required(f):
 def index():
     search = request.args.get('search', '')
     category = request.args.get('category', '')
-    message = session.pop('flash_message', None)
 
     conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
+    cursor = conn.cursor()
     sql = "SELECT * FROM products WHERE 1=1"
     params = []
     if search:
@@ -87,7 +86,7 @@ def login():
         password = request.form['password']
 
         conn = get_db_connection()
-        cursor = conn.cursor(dictionary=True)
+        cursor = conn.cursor()
         cursor.execute("SELECT * FROM users WHERE username=%s", (username,))
         user = cursor.fetchone()
         cursor.close()
@@ -172,7 +171,7 @@ def checkout():
         return redirect(url_for('index'))
 
     conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
+    cursor = conn.cursor()
     cursor.execute("SELECT id, username, email, phone FROM users WHERE id=%s", (session['user_id'],))
     user = cursor.fetchone()
     cursor.close()
@@ -317,7 +316,7 @@ def payment_failed_record():
     amount_in_paise = int(total_amount)
 
     conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
+    cursor = conn.cursor()
 
     try:
         # 1. Check or insert order
@@ -377,7 +376,7 @@ def payment_failed():
 def order_history():
     user_id = session['user_id']
     conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
+    cursor = conn.cursor()
 
     cursor.execute("""
     SELECT o.id, 
@@ -402,7 +401,7 @@ def order_history():
 @admin_required
 def admin_payments():
     conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
+    cursor = conn.cursor()
     cursor.execute("SELECT p.*, u.username FROM payments p JOIN users u ON p.user_id = u.id ORDER BY p.created_at DESC")
     payments = cursor.fetchall()
     cursor.close()
@@ -415,7 +414,7 @@ def profile():
     user_id = session.get('user_id')  # safely get the user_id from session
 
     conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
+    cursor = conn.cursor()
 
     # Fetch username, email, and phone
     cursor.execute("SELECT id, username, email, phone FROM users WHERE id = %s", (user_id,))
@@ -470,7 +469,7 @@ def remove_from_wishlist(product_id):
 def wishlist():
     user_id = session['user_id']
     conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
+    cursor = conn.cursor()
     cursor.execute("""
         SELECT p.id, p.name, p.price, p.image_url
         FROM wishlist w

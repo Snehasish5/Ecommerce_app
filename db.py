@@ -1,10 +1,12 @@
-import mysql.connector
-from config import DB_HOST, DB_USER, DB_PASSWORD, DB_NAME
+import pymysql
+import config
 
 def get_db_connection():
-    return mysql.connector.connect(
-        host=DB_HOST,
-        user=DB_USER,
-        password=DB_PASSWORD,
-        database=DB_NAME
+    return pymysql.connect(
+        host=config.DB_HOST,
+        user=config.DB_USER,
+        password=config.DB_PASSWORD,
+        database=config.DB_NAME,
+        charset='utf8mb4',
+        cursorclass=pymysql.cursors.DictCursor
     )
