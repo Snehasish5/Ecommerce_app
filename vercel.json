@@ -2,14 +2,14 @@
   "version": 2,
   "builds": [
     {
-      "src": "D://Project//ECOMMERCE App//app.py",
+      "src": "app.py",
       "use": "@vercel/python"
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "D://Project//ECOMMERCE App//app.py"
+      "dest": "app.py"
     }
   ],
   "buildCommand": "pip install -r requirements.txt"
