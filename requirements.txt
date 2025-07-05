@@ -92,4 +92,4 @@ wrapt==1.16.0
 wsproto==1.2.0
 WTForms==3.2.1
 gunicorn==23.0.0
-flask == 2.3.3
+flask == 2.3.2
