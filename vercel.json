@@ -3,10 +3,7 @@
   "builds": [
     {
       "src": "D://Project//ECOMMERCE App//app.py",
-      "use": "@vercel/python",
-      "config": {
-        "maxLambdaSize": "50mb"
-      }
+      "use": "@vercel/python"
     }
   ],
   "routes": [
@@ -14,6 +11,5 @@
       "src": "/(.*)",
       "dest": "D://Project//ECOMMERCE App//app.py"
     }
-  ],
-  "buildCommand": "pip install -r requirement.txt"
+  ]
 }
