@@ -56,6 +56,7 @@ pyright==1.1.389
 PySide6==6.9.1
 PySide6_Addons==6.9.1
 PySide6_Essentials==6.9.1
+python == 3.12.3
 python-dateutil==2.9.0.post0
 python-dotenv==1.1.0
 python-engineio==4.10.1
