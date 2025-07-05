@@ -7,8 +7,8 @@ from datetime import datetime
 import config
 import razorpay
 
-app = Flask(__name__)
-app.secret_key = 'your-secret-key-here'
+flask_app = Flask(__name__)
+flask_app.secret_key = 'your-secret-key-here'
 
 client = razorpay.Client(auth=(config.RAZORPAY_KEY_ID, config.RAZORPAY_KEY_SECRET))
 
@@ -32,7 +32,7 @@ def admin_required(f):
     return decorated_function
 
 # ---- Routes ----
-@app.route('/')
+@flask_app.route('/')
 def index():
     search = request.args.get('search', '')
     category = request.args.get('category', '')
@@ -54,7 +54,7 @@ def index():
 
     return render_template('index.html', products=products, search=search, category=category)
 
-@app.route('/register', methods=['GET', 'POST'])
+@flask_app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
         username = request.form['username']
@@ -78,7 +78,7 @@ def register():
 
     return render_template('register.html')
 
-@app.route('/login', methods=['GET', 'POST'])
+@flask_app.route('/login', methods=['GET', 'POST'])
 def login():
     next_page = request.args.get('next')
     if request.method == 'POST':
@@ -103,18 +103,18 @@ def login():
 
     return render_template('login.html')
 
-@app.route('/logout')
+@flask_app.route('/logout')
 def logout():
     session.clear()
     flash("Logged out successfully.", "info")
     return redirect(url_for('index'))
 
-@app.route('/product/<int:product_id>')
+@flask_app.route('/product/<int:product_id>')
 def product(product_id):
     product = get_product(product_id)
     return render_template('product.html', product=product)
 
-@app.route('/add_to_cart/<int:product_id>')
+@flask_app.route('/add_to_cart/<int:product_id>')
 def add_to_cart(product_id):
     qty = int(request.args.get('qty', 1))
     cart = session.get('cart', {})
@@ -123,14 +123,14 @@ def add_to_cart(product_id):
     flash("Added to cart.", "success")
     return redirect(url_for('cart'))
 
-@app.route('/cart')
+@flask_app.route('/cart')
 def cart():
     cart = session.get('cart', {})
     products = [get_product(int(pid)) for pid in cart]
     total = sum(p['price'] * cart[str(p['id'])] for p in products)
     return render_template('cart.html', products=products, cart=cart, total=total)
 
-@app.route('/update_cart', methods=['POST'])
+@flask_app.route('/update_cart', methods=['POST'])
 def update_cart():
     product_id = str(request.form['product_id'])
     action = request.form['action']
@@ -147,7 +147,7 @@ def update_cart():
     session['cart'] = cart
     return redirect(url_for('cart'))
 
-@app.route('/remove_from_cart', methods=['POST'])
+@flask_app.route('/remove_from_cart', methods=['POST'])
 def remove_from_cart():
     product_id = request.form.get('product_id')
     if product_id and 'cart' in session:
@@ -156,13 +156,13 @@ def remove_from_cart():
         flash("Item removed from cart.", "info")
     return redirect(url_for('cart'))
 
-@app.route('/clear_cart', methods=['POST'])
+@flask_app.route('/clear_cart', methods=['POST'])
 def clear_cart():
     session.pop('cart', None)
     flash("All items removed from cart.", "info")
     return redirect(url_for('cart'))
 
-@app.route('/checkout')
+@flask_app.route('/checkout')
 @login_required
 def checkout():
     cart = session.get('cart', {})
@@ -206,7 +206,7 @@ def checkout():
         cart_items=cart_items
     )
 
-@app.route('/payment_success', methods=['POST'])
+@flask_app.route('/payment_success', methods=['POST'])
 @login_required
 def payment_success():
     data = request.get_json()
@@ -296,7 +296,7 @@ def payment_success():
 
     return jsonify({'status': order_status, 'redirect': url_for('index')})
 
-@app.route('/payment_failed_record', methods=['POST'])
+@flask_app.route('/payment_failed_record', methods=['POST'])
 @login_required
 def payment_failed_record():
     import traceback
@@ -365,13 +365,13 @@ def payment_failed_record():
         cursor.close()
         conn.close()
 
-@app.route('/payment_failed')
+@flask_app.route('/payment_failed')
 @login_required
 def payment_failed():
     flash("❌Payment failed or cancelled.", "danger")
     return redirect(url_for('index'))
 
-@app.route('/orders')
+@flask_app.route('/orders')
 @login_required
 def order_history():
     user_id = session['user_id']
@@ -397,7 +397,7 @@ def order_history():
     
     return render_template('orders.html', orders=orders)
 
-@app.route('/admin/payments')
+@flask_app.route('/admin/payments')
 @admin_required
 def admin_payments():
     conn = get_db_connection()
@@ -408,7 +408,7 @@ def admin_payments():
     conn.close()
     return render_template('admin_payments.html', payments=payments)
 
-@app.route('/profile')
+@flask_app.route('/profile')
 @login_required
 def profile():
     user_id = session.get('user_id')  # safely get the user_id from session
@@ -425,13 +425,13 @@ def profile():
 
     return render_template('profile.html', user=user)
 
-@app.route('/admin/products')
+@flask_app.route('/admin/products')
 @admin_required
 def admin_products():
     products = get_products()
     return render_template('admin_products.html', products=products)
 
-@app.route('/wishlist/add/<int:product_id>', methods=['POST'])
+@flask_app.route('/wishlist/add/<int:product_id>', methods=['POST'])
 @login_required
 def add_to_wishlist(product_id):
     user_id = session['user_id']
@@ -451,7 +451,7 @@ def add_to_wishlist(product_id):
         conn.close()
     return redirect(request.referrer or url_for('index'))
 
-@app.route('/wishlist/remove/<int:product_id>', methods=['POST'])
+@flask_app.route('/wishlist/remove/<int:product_id>', methods=['POST'])
 @login_required
 def remove_from_wishlist(product_id):
     user_id = session['user_id']
@@ -464,7 +464,7 @@ def remove_from_wishlist(product_id):
     flash("Removed from wishlist.", "info")
     return redirect(request.referrer or url_for('wishlist'))
 
-@app.route('/wishlist')
+@flask_app.route('/wishlist')
 @login_required
 def wishlist():
     user_id = session['user_id']
@@ -481,12 +481,12 @@ def wishlist():
     conn.close()
     return render_template('wishlist.html', wishlist_items=items)
 
-@app.context_processor
+@flask_app.context_processor
 def inject_year():
     return {'current_year': datetime.now().year}
 
 # Required for Vercel serverless deployment
-app = app
+app = flask_app
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    flask_app.run(debug=True)
