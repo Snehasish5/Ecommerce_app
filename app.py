@@ -408,6 +408,45 @@ def admin_payments():
     conn.close()
     return render_template('admin_payments.html', payments=payments)
 
+@flask_app.route('/direct_checkout', methods=['POST'])
+@login_required
+def direct_checkout():
+    product_id = int(request.form['product_id'])
+    quantity = int(request.form['quantity'])
+
+    product = get_product(product_id)
+    if not product or quantity <= 0 or quantity > product['stock']:
+        flash("Invalid product or quantity", "danger")
+        return redirect(url_for('index'))
+
+    user_id = session['user_id']
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, username, email, phone FROM users WHERE id=%s", (user_id,))
+    user = cursor.fetchone()
+    cursor.close()
+    conn.close()
+
+    total = product['price'] * quantity
+    amount = int(total * 100)  # in paise
+    order = client.order.create({"amount": amount, "currency": "INR", "payment_capture": "1"})
+
+    return render_template(
+        'checkout.html',
+        user=user,
+        razorpay_key=config.RAZORPAY_KEY_ID,
+        razorpay_order_id=order['id'],
+        total=total,
+        cart_items=[{
+            'product_id': product['id'],
+            'product_name': product['name'],
+            'quantity': quantity,
+            'price': product['price'],
+            'total': total
+        }]
+    )
+
+
 @flask_app.route('/profile')
 @login_required
 def profile():

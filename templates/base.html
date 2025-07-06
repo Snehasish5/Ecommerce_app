@@ -4,30 +4,74 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{% block title %}ShopEase{% endblock %}</title>
+
+  <!-- Bootstrap -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Font Awesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <!-- Custom CSS -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  
+  <style>
+    .search-container {
+      position: relative;
+    }
+
+    .search-form {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: transparent;
+    }
+
+    .search-input {
+      display: none;
+      width: 180px;
+      padding: 5px 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .search-form.active .search-input {
+      display: block;
+    }
+
+    .search-toggle {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+
+    .search-toggle:focus {
+      outline: none;
+    }
+
+    .navbar-nav form {
+      margin-left: 15px;
+    }
+  </style>
 </head>
+
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
   <div class="container">
-    <a class="navbar-brand">
-      <img src="{{ url_for('static', filename='images/logo.png') }}" alt="ShopEase" height="40"> ShopEase
+    <a class="navbar-brand" href="{{ url_for('index') }}">
+      <img src="{{ url_for('static', filename='images/logo.png') }}" alt="ShopEase" height="40"> <strong>ShopEase</strong>
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
       <span class="navbar-toggler-icon"></span>
     </button>
+
     <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ms-auto">
-        <form class="d-flex me-3" action="{{ url_for('index') }}" method="get">
-          <input class="form-control me-2" name="search" type="search" placeholder="Search products" value="{{ search or '' }}">
-          <button class="btn btn-light btn-sm" type="submit">Search</button>
-        </form>
+      <ul class="navbar-nav ms-auto align-items-center">
         {% if session.get('username') %}
-          <li class="nav-item"><a class="nav-link" href="{{ url_for('profile') }}">Hi, {{ session.username }}</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('profile') }}" title="Profile">Hi, {{ session.username }}</a></li>
           {% if session.get('is_admin') == 1 %}
             <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_products') }}">Admin</a></li>
           {% endif %}
-          <li class="nav-item"><a class="nav-link" href="{{ url_for('order_history') }}">Order History</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('order_history') }}">Orders</a></li>
           <li class="nav-item"><a class="nav-link" href="{{ url_for('wishlist') }}">Wishlist</a></li>
           <li class="nav-item"><a class="nav-link" href="{{ url_for('cart') }}">Cart</a></li>
           <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}">Logout</a></li>
@@ -36,12 +80,14 @@
           <li class="nav-item"><a class="nav-link" href="{{ url_for('register') }}">Register</a></li>
           <li class="nav-item"><a class="nav-link" href="{{ url_for('cart') }}">Cart</a></li>
         {% endif %}
-        <form id="search-form" class="search-form" action="/" method="get">
-          <button type="button" id="search-icon">
-            🔍
-          </button>
-          <input type="text" name="search" id="search-input" placeholder="Search..." />
-        </form>
+
+        <!-- Search Toggle -->
+        <li class="nav-item d-flex align-items-center">
+          <form action="{{ url_for('index') }}" method="get" class="search-form d-flex align-items-center">
+            <a href="search" class="nav-link search-toggle">Search<i class="fa fa-search ms-1"></i></a>
+            <input type="text" name="search" class="form-control search-input ms-2" placeholder="Search..." />
+          </form>
+        </li>
       </ul>
     </div>
   </div>
@@ -52,53 +98,80 @@
     {% if messages %}
       {% for category, message in messages %}
         <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-        {{ message }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
       {% endfor %}
     {% endif %}
   {% endwith %}
+
   {% block content %}{% endblock %}
 </div>
 
 <!-- Back to Top Button -->
 <button onclick="scrollToTop()" id="backToTopBtn" title="Back to Top">↑</button>
 <script>
-  // Show the button when user scrolls down 100px
   window.onscroll = function () {
-    document.getElementById("backToTopBtn").style.display = 
+    document.getElementById("backToTopBtn").style.display =
       document.documentElement.scrollTop > 100 ? "block" : "none";
   };
-
-  // Scroll to top smoothly
   function scrollToTop() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
-</script>
 
-<script>
-  const icon = document.getElementById("search-icon");
-  const input = document.getElementById("search-input");
+  document.addEventListener('DOMContentLoaded', function () {
+  const toggleBtn = document.querySelector('.search-toggle');
+  const searchForm = document.querySelector('.search-form');
 
-  icon.addEventListener("click", () => {
-    input.classList.toggle("active");
-    if (input.classList.contains("active")) {
+  toggleBtn.addEventListener('click', function (e) {
+    e.preventDefault();
+    searchForm.classList.toggle('active');
+    const input = searchForm.querySelector('.search-input');
+    if (searchForm.classList.contains('active')) {
       input.focus();
     }
   });
+});
+
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 
 <!-- Footer -->
-<footer class="bg-dark text-white mt-5 py-4">
-  <div class="container text-center">
-    <p class="mb-1"><strong>ShopEase Pvt. Ltd.</strong></p>
-    <p class="mb-1">123, Market Street, Kolkata, India - 700001</p>
-    <p class="mb-1">Contact: <a href="tel:+91 9876543210" class="text-white text-decoration-underline">+91 98765 43210</a></p>
-    <p class="mb-0">&copy; {{ current_year }} ShopEase. All rights reserved.</p>
+<footer class="footer text-white mt-5 py-3">
+  <div class="container">
+    <div class="row text-center text-md-start">
+      <!-- Logo and Info -->
+      <div class="col-md-4 mb-4">
+        <h5 class="fw-bold">ShopEase Pvt. Ltd.</h5>
+        <p>123, Market Street<br>Kolkata, India - 700001</p>
+        <p>📞 <a href="tel:+919876543210" class="text-white text-decoration-underline">+91 98765 43210</a></p>
+        <p>✉️ <a href="mailto:support@shopease.com" class="text-white text-decoration-underline">support@shopease.com</a></p>
+      </div>
+
+      <!-- Quick Links -->
+      <div class="col-md-4 mb-4">
+        <h5 class="fw-bold">Quick Links</h5>
+        <ul class="list-unstyled">
+          <li><a href="{{ url_for('index') }}" class="text-white text-decoration-none">Home</a></li>
+          <li><a href="{{ url_for('order_history') }}" class="text-white text-decoration-none">Orders</a></li>
+          <li><a href="{{ url_for('wishlist') }}" class="text-white text-decoration-none">Wishlist</a></li>
+          <li><a href="{{ url_for('cart') }}" class="text-white text-decoration-none">Cart</a></li>
+        </ul>
+      </div>
+
+      <!-- Social Media -->
+      <div class="col-md-4 mb-4">
+        <h5 class="fw-bold">Follow Us</h5>
+        <a href="#" class="text-white me-3 fs-5"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" class="text-white me-3 fs-5"><i class="fab fa-instagram"></i></a>
+        <a href="#" class="text-white me-3 fs-5"><i class="fab fa-twitter"></i></a>
+        <a href="#" class="text-white fs-5"><i class="fab fa-linkedin-in"></i></a>
+      </div>
+    </div>
+
+    <hr class="bg-light" />
+    <p class="text-center mb-0">&copy; {{ current_year }} <strong>ShopEase</strong>. All rights reserved.</p>
   </div>
 </footer>
-</body>
-</html>

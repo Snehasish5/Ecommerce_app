@@ -2,39 +2,44 @@
 {% block title %}ShopEase - Home{% endblock %}
 
 {% block content %}
-<h1 class="mb-4">Products</h1>
+<h2 class="mb-4 text-center">Explore Our Products</h2>
 
-<div class="row">
+<div class="row justify-content-center">
   {% for product in products %}
     {% set discount_percentage = 20 %}
     {% set discount_multiplier = (100 - discount_percentage) %}
     {% set original_price = (product.price * 100 / discount_multiplier) | round(0) %}
 
-    <div class="col-md-4 mb-4">
-      <div class="card h-100 shadow-sm position-relative">
-        <img src="{{ url_for('static', filename='images/' ~ product.image_url) }}" class="card-img-top" alt="{{ product.name }}">
+    <div class="col-6 col-sm-4 col-md-3 col-lg-2 d-flex">
+      <div class="card product-card shadow-sm w-100">
+        <img src="{{ url_for('static', filename='images/' ~ product.image_url) }}" 
+        class="card-img-top object-fit-contain" 
+        alt="{{ product.name }}" 
+        style="height: 150px; object-fit: cover;">
 
-        <div class="card-body d-flex flex-column">
-          <h5 class="card-title">{{ product.name }}</h5>
-          <p class="card-text text-truncate">{{ product.description }}</p>
+        <form action="{{ url_for('add_to_wishlist', product_id=product.id) }}" method="post" class="wishlist-form">
+          <button type="submit" class="wishlist-icon" title="Add to Wishlist">
+            <i class="fa fa-heart"></i>
+          </button>
+        </form>
+
+        <div class="card-body d-flex flex-column p-2">
+          <h6 class="card-title mb-1 text-truncate">{{ product.name }}</h6>
+          <p class="card-text small text-muted mb-2 text-truncate">{{ product.description }}</p>
 
           <div class="mb-2">
-            <span class="text-success fw-bold fs-5">₹{{ product.price }}</span>
-            <span class="text-danger text-decoration-line-through ms-2">₹{{ original_price }}</span>
+            <span class="text-success fw-semibold">₹{{ product.price }}</span>
+            <span class="text-danger text-decoration-line-through ms-2 small">₹{{ original_price }}</span>
           </div>
 
-          <div class="mb-3">
-            <span class="badge rounded-pill bg-danger fs-6 px-3 py-2">
-              {{ discount_percentage }}% OFF
-            </span>
-          </div>
+          <span class="badge bg-danger mb-2">{{ discount_percentage }}% OFF</span>
 
-          <a href="{{ url_for('product', product_id=product.id) }}" class="btn btn-primary mt-auto">View Details</a>
+          <a href="{{ url_for('product', product_id=product.id) }}" class="btn btn-sm btn-primary mt-auto">View Details</a>
         </div>
       </div>
     </div>
   {% else %}
-    <p>No products found.</p>
+    <p class="text-center">No products found.</p>
   {% endfor %}
 </div>
 {% endblock %}

@@ -8,7 +8,8 @@
   {% for product in wishlist_items %}
     <div class="col-md-4 mb-4">
       <div class="card h-100">
-        <img src="{{ url_for('static', filename='images/' ~ product.image_url) }}" class="card-img-top">
+        <img src="{{ url_for('static', filename='images/' ~ product.image_url) }}" 
+        class="card-img-top object-fit-contain">
         <div class="card-body">
           <h5>{{ product.name }}</h5>
           <p>₹{{ product.price }}</p>
