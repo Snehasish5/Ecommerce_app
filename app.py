@@ -8,7 +8,7 @@ import config
 import razorpay
 
 flask_app = Flask(__name__)
-flask_app.secret_key = 'your-secret-key-here'
+flask_app.secret_key = config.SECRET_KEY
 
 client = razorpay.Client(auth=(config.RAZORPAY_KEY_ID, config.RAZORPAY_KEY_SECRET))
 
