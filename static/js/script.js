@@ -1,4 +1,4 @@
-// main.js - polished UI interactions
+// script.js - polished UI interactions
 
 document.addEventListener("DOMContentLoaded", () => {
   console.log("ShopEase: Ready");
