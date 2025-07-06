@@ -156,3 +156,23 @@ footer {
   opacity: 0;
   transition: opacity 1s ease;
 }
+
+.search-form {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+#search-input {
+  display: none;
+  background-color: transparent;
+  border: 1px solid #ccc;
+  color: white;
+  padding: 5px 10px;
+  margin-left: 8px;
+  border-radius: 5px;
+}
+
+#search-input.active {
+  display: block;
+}
