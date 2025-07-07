@@ -212,6 +212,10 @@ def payment_success():
     data = request.get_json()
     user_id = session['user_id']
     cart = session.get('cart', {})
+    # If direct_order exists, override the cart
+    if 'direct_order' in session:
+        direct_order = session.get('direct_order')
+        cart = {str(direct_order['product_id']): direct_order['quantity']}
     total_amount = 0
 
     # Extract Razorpay details
@@ -290,6 +294,7 @@ def payment_success():
 
     if order_status == 'paid':
         session.pop('cart', None)
+        session.pop('direct_order', None)
         flash("✅ Order placed successfully!", "success")
     else:
         flash("❌ Order failed or was not completed.", "danger")
@@ -431,6 +436,15 @@ def direct_checkout():
     amount = int(total * 100)  # in paise
     order = client.order.create({"amount": amount, "currency": "INR", "payment_capture": "1"})
 
+    # ✅ Save direct order to session
+    session['direct_order'] = {
+        'product_id': product['id'],
+        'product_name': product['name'],
+        'quantity': quantity,
+        'price': product['price'],
+        'total': total
+    }
+
     return render_template(
         'checkout.html',
         user=user,
@@ -445,7 +459,6 @@ def direct_checkout():
             'total': total
         }]
     )
-
 
 @flask_app.route('/profile')
 @login_required
