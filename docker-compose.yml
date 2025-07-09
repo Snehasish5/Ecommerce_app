@@ -1,30 +1,27 @@
-version: '3.8'
+version: '3.9'
 
 services:
-  app:
+  web:
     build: .
-    container_name: flask_app
     ports:
       - "5000:5000"
+    depends_on:
+      - db
     environment:
-      - DB_HOST=mysql
+      - DB_HOST=db
       - DB_USER=root
       - DB_PASSWORD=user
       - DB_NAME=ecommerce
-    depends_on:
-      - mysql
 
-  mysql:
+  db:
     image: mysql:8.0
-    container_name: mysql
-    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: user
       MYSQL_DATABASE: ecommerce
     ports:
       - "3306:3306"
     volumes:
-      - mysql_data:/var/lib/mysql
+      - db_data:/var/lib/mysql
 
 volumes:
-  mysql_data:
+  db_data:
