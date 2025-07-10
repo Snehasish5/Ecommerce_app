@@ -1,12 +1,13 @@
 import pymysql
-import os
+import config
 
 def get_db_connection():
     return pymysql.connect(
-        host=os.getenv("DB_HOST", "localhost"),
-        user=os.getenv("DB_USER", "root"),
-        password=os.getenv("DB_PASSWORD", ""),
-        database=os.getenv("DB_NAME", "ecommerce"),
+        host=config.DB_HOST,
+        user=config.DB_USER,
+        password=config.DB_PASSWORD,
+        database=config.DB_NAME,
+        port=3306,
         charset='utf8mb4',
         cursorclass=pymysql.cursors.DictCursor
     )
